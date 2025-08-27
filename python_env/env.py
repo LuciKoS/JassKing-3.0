@@ -33,18 +33,15 @@ class JassEnv:
         if seed is None:
             seed = random.randrange(1_000_000)
         self.seed = seed if seed is not None else self.seed
-        if trump is not None:
-            self.trump = trump
+        if trump is None:
+            trump = random.randint(0, 7)
+        self.trump = trump
         if dealer is not None:
             self.dealer = dealer
         self.state.start_round(seed = self.seed, dealer = self.dealer, trump = self.trump)
         obs = self._encode_observation()
         mask = self._legal_action_mask()
         return obs, {"mask": mask}
-
-    def zug(self, action: int) -> Tuple[tuple, float, bool, bool, Dict[str, Any]]:
-
-        return self.reset()
 
     def _encode_observation(self) -> tuple:
 

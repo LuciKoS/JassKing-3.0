@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 32
+names: ['ei10', 'ei7', 'ei8', 'ei9', 'eia', 'eik', 'eio', 'eiu', 'ro10', 'ro6', 'ro7', 'ro8', 'roa', 'rok', 'roo', 'rou', 'se10', 'se6', 'se8', 'se9', 'sea', 'sek', 'seo', 'seu', 'si10', 'si6', 'si8', 'si9', 'sia', 'sik', 'sio', 'siu']
+
+roboflow:
+  workspace: jasskarten
+  project: schieber-swisslos-tu1a2
+  version: 4
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/jasskarten/schieber-swisslos-tu1a2/dataset/4

@@ -1,11 +1,15 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from environment import jassgame   #  mit actuall env replace 
+from python_env.env import jassgame  #  mit actuall env replace 
+from JassGott.agent import save_checkpoint
 
 # loop.py (change import)
-from agent import CFG, DQN, ReplayBuffer, EpsilonScheduler, select_action, Transition, dqn_train
+from JassGott.agent import CFG, DQN, ReplayBuffer, EpsilonScheduler, select_action, Transition, dqn_train
 # then create the nets locally:
+
+
+
 policy_net = DQN(CFG.num_actions).to(CFG.device)
 target_net = DQN(CFG.num_actions).to(CFG.device)
 policy_net.train()
@@ -44,6 +48,16 @@ for step in range(CFG.max_env_steps):
     if len(replay) >= CFG.min_buffer and step % 4 == 0:
         batch = replay.sample(CFG.batch_size)
         loss = dqn_train(policy_net, target_net, optimizer, loss_fn, batch, CFG.gamma, CFG.device)
+
+    if step % 10_000 == 0 and step > 0:
+        save_checkpoint(
+            path=f"checkpoints/jass_dqn_step_{step}.pt",
+            step=step,
+            policy_net=policy_net,
+            target_net=target_net,
+            optimizer=optimizer,
+            replay=replay,  # optional
+        )
 
     if step % CFG.target_update_every == 0:
         target_net.load_state_dict(policy_net.state_dict())

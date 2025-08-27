@@ -12,8 +12,8 @@ def cid_to_compact(cid: int) -> str:
     suit_char = card.suit.name[0]  # R/E/S/S (Rose/Eichel/Schilte/Schelle)
     rank_map = {
         Rank.SIX: "6", Rank.SEVEN: "7", Rank.EIGHT: "8",
-        Rank.NINE: "9", Rank.TEN: "10", Rank.JACK: "U",
-        Rank.QUEEN: "O", Rank.KING: "K", Rank.ACE: "A",
+        Rank.NINE: "9", Rank.TEN: "10", Rank.UNDER: "U",
+        Rank.OBER: "O", Rank.KOENIG: "K", Rank.ASS: "A",
     }
     return f"{suit_char}{rank_map[card.rank]}"
 

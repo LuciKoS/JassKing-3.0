@@ -58,6 +58,8 @@ for step in range(CFG.max_env_steps):
             optimizer=optimizer,
             replay=replay,  # optional
         )
+    if step % 100 == 0 :
+        print(f"step: {step}")
 
     if step % CFG.target_update_every == 0:
         target_net.load_state_dict(policy_net.state_dict())

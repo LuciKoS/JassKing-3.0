@@ -8,9 +8,17 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, ROOT)
 from JassGott.agent import DQN, greedy_action, CFG
 
+def load_policy(checkpoint_path):
+    device = CFG.device
+    model = DQN(num_actions=CFG.num_actions).to(device)
+    checkpoint = torch.load(checkpoint_path, map_location=device)
+    model.load_state_dict(checkpoint['policy_state_dict'])
+    model.eval()
+    return model, device
+
 # --------------------------- Card system ---------------------------
-SUITS = ["Schellen", "Schilten", "Eicheln", "Rosen"]  # Bells, Shields, Acorns, Roses
-RANKS = ["6", "7", "8", "9", "B", "U", "O", "K", "A"]  # Banner=10, Under=J, Ober=Q, King, Ace
+SUITS = ["Rosen", "Eicheln", "Schilten", "Schellen"]  # Match python_env/cards.py order
+RANKS = ["6", "7", "8", "9", "10", "U", "O", "K", "A"]  # Also fix: "B" should be "10"
 CARD_NAMES = [f"{s}-{r}" for s in SUITS for r in RANKS]  # 36 cards
 CARD_SET = ["(empty)"] + CARD_NAMES
 
@@ -73,6 +81,20 @@ class App(tk.Tk):
         self._build_right_meta()
         self._build_bottom_actions()
 
+
+    def get_policy_action(self, model, device):
+        """Get the policy's recommended action for current state"""
+        state = self.get_state()
+        valid_mask = self.compute_valid_mask()
+        
+        # Convert to torch tensors - DON'T add batch dim, greedy_action will do it
+        state_t = tuple(torch.as_tensor(x).to(device).float() for x in state)
+        mask_t = torch.as_tensor(valid_mask, dtype=torch.bool).to(device)
+        
+        # Get greedy action
+        action = greedy_action(model, state_t, mask_t, device)
+        return action, CARD_NAMES[action]
+
     # ---- Left: 9 hand slots
     def _build_left_hand(self):
         f = ttk.LabelFrame(self, text="Hand (9 cards)")
@@ -84,6 +106,14 @@ class App(tk.Tk):
             cb = ttk.Combobox(f, textvariable=var, values=CARD_SET, state="readonly", width=22)
             cb.grid(row=i//3, column=i%3, padx=6, pady=6)
             self.hand_vars.append(var)
+    def on_policy_action(self):
+        checkpoint_path = "checkpoints/jass_dqn_step_120000.pt"
+        try:
+            model, device = load_policy(checkpoint_path)
+            action_idx, card_name = self.get_policy_action(model, device)
+            messagebox.showinfo("Policy Action", f"Recommended: {card_name} (index {action_idx})")
+        except Exception as e:
+            messagebox.showerror("Error", f"Could not load policy: {e}")
 
     # ---- Center: 4 table slots
     def _build_center_table(self):
@@ -151,6 +181,7 @@ class App(tk.Tk):
         ttk.Button(f, text="Greedy Action (load model)", command=self.on_greedy_action).grid(row=0, column=2, padx=6)
         ttk.Button(f, text="New Game", command=self.on_new_game).grid(row=0, column=3, padx=6)
         ttk.Button(f, text="Show State Shapes", command=self.on_show_shapes).grid(row=0, column=4, padx=6)
+        ttk.Button(f, text="Policy Action", command=self.on_policy_action).grid(row=0, column=5, padx=6)
 
     # ------------------- State builders -------------------
     def hand_vector(self):

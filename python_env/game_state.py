@@ -70,7 +70,7 @@ class RoundState:
 
             block_led = (hand >> (9 * self.suit_led)) & 0x1FF
             has_led = block_led != 0
-            only_trump_jack = (self.suit_led == self.trump) and (block_led == (1 << Rank.JACK))
+            only_trump_jack = (self.suit_led == self.trump) and (block_led == (1 << Rank.UNDER))
 
 
             if card.suit != self.trump and card.suit != self.suit_led and has_led and not only_trump_jack:
@@ -79,7 +79,7 @@ class RoundState:
             self.suit_led = card.suit
 
 
-        print(f"Player: {self.current_player} played {card}")
+       
         self.cards_on_table.append(card_id)
         hand = remove(hand, card_id)
         self.cards[self.round][self.current_player] = card_id

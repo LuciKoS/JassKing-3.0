@@ -14,7 +14,7 @@ class CFG:
     buffer_size: int = 200_000
     min_buffer: int = 5_000
     target_update_every: int = 2000
-    max_env_steps: int = 1_000_000
+    max_env_steps: int = 10_000_000
     eps_start: float = 1.0
     eps_end: float = 0.05
     eps_decay_steps: int = 200_000

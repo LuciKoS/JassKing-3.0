@@ -25,7 +25,7 @@ loss_fn = nn.SmoothL1Loss()
 
 start_step = 0
 
-ckpt = "/Users/lucbaumeler/Documents/Eth/VsCode/MLS/RL/JassKing-3.0/checkpoints/policy_28_8.pt"
+ckpt = "/Users/lucbaumeler/Documents/Eth/VsCode/MLS/RL/JassKing-3.0/checkpoints/policy_29_10.pt"
 
 if os.path.exists(ckpt):
     from JassGott.agent import load_checkpoint

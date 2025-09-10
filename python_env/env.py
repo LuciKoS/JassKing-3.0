@@ -34,7 +34,7 @@ class JassEnv:
             seed = random.randrange(1_000_000)
         self.seed = seed if seed is not None else self.seed
         if trump is None:
-            trump = random.randint(0, 7)
+            trump = 0
         self.trump = trump
         if dealer is not None:
             self.dealer = dealer

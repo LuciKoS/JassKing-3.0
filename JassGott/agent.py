@@ -18,7 +18,7 @@ class CFG:
     eps_start: float = 1.0
     eps_end: float = 0.05
     eps_decay_steps: int = 200_000
-    device: str = "cuda" if torch.cuda.is_available() else "cpu"
+    device: str = "cuda" if torch.cuda.is_available() else "mps"
 
 Transition = namedtuple("T", "s a r sp done mask mask_p")
 
